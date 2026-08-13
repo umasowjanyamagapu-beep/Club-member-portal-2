@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+  </head>
+  <body>
+        <div class="container">
+  <!-- Auth Section -->
+  <div id="auth-section" class="card">
+    <div id="login-form">
+      <h2>Club Member Login</h2>
+      <input type="email" id="login-email" placeholder="Email Address" required />
+      <input type="password" id="login-password" placeholder="Password" required />
+      <button onclick="login()">Log In</button>
+      <p><a href="#" onclick="showForgotPassword()">Forgot Password?</a></p>
+    </div>
+
+    <div id="forgot-form" style="display: none;">
+      <h2>Reset Password</h2>
+      <input type="email" id="reset-email" placeholder="Enter registered email" required />
+      <button onclick="resetPassword()">Send Reset Link</button>
+      <p><a href="#" onclick="showLogin()">Back to Login</a></p>
+      <p id="reset-msg" class="success-text"></p>
+    </div>
+  </div>
+
+  <!-- Chat Section (Members Only) -->
+  <div id="chat-section" class="card" style="display: none;">
+    <div class="chat-header">
+      <h2>AWS SBG Club Chatbot</h2>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <div id="chat-box" class="chat-box"></div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Ask about club rules, workshops, Bedrock..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+    <script src="./script.js"></script>
+  </body>
+</html>
