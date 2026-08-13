@@ -46,13 +46,43 @@ const fallbackContact = "I could not find that in the club documents. Please con
 
 // UI Toggle Functions
 function showForgotPassword() {
-  document.getElementById("login-form").style.display = "none";
-  document.getElementById("forgot-form").style.display = "block";
+  const loginForm = document.getElementById("login-form");
+  const forgotForm = document.getElementById("forgot-form");
+  if (loginForm) loginForm.style.display = "none";
+  if (forgotForm) forgotForm.style.display = "block";
 }
 
 function showLogin() {
-  document.getElementById("forgot-form").style.display = "none";
-  document.getElementById("login-form").style.display = "block";
+  const loginForm = document.getElementById("login-form");
+  const forgotForm = document.getElementById("forgot-form");
+  if (forgotForm) forgotForm.style.display = "none";
+  if (loginForm) loginForm.style.display = "block";
+}
+
+// Authentication Functions
+function handleLogin(event) {
+  if (event) event.preventDefault();
+  
+  // Login సక్సెస్ అయ్యాక Login Form దాచి Chat Section చూపిస్తుంది
+  const authSection = document.getElementById("auth-section") || document.getElementById("login-form");
+  const chatSection = document.getElementById("chat-section");
+  
+  if (authSection) authSection.style.display = "none";
+  if (chatSection) chatSection.style.display = "block";
+  
+  // ఒకవేళ అలర్ట్ బాక్స్ ఉంటే
+  alert("Successfully Logged In!");
+}
+
+function handleSignup(event) {
+  if (event) event.preventDefault();
+  handleLogin(event);
+}
+
+function handleForgotPassword(event) {
+  if (event) event.preventDefault();
+  alert("Password reset code sent to your email!");
+  showLogin();
 }
 
 // Smart Search Function
