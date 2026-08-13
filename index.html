@@ -12,6 +12,31 @@
   <div id="auth-section" class="card">
     <div id="login-form">
       <h2>Club Member Login</h2>
+      <div <!-- Admin UI Modal or Section -->
+<div id="admin-panel">
+  <h3>Admin Document Manager</h3>
+  <input type="text" id="docName" placeholder="e.g. event-day-briefing.md" />
+  <textarea id="docContent" placeholder="Paste document content here..."></textarea>
+  <button onclick="publishDoc()">Publish Document</button>
+</div>
+      </div>
+
+<script>
+async function publishDoc() {
+  const filename = document.getElementById('docName').value;
+  const content = document.getElementById('docContent').value;
+
+  const res = await fetch('/api/admin/upload', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename, content })
+  });
+  
+  const data = await res.json();
+  alert(data.message);
+  fetchDashboardDocs(); // Refresh doc list instantly
+}
+</script>
       <input type="email" id="login-email" placeholder="Email Address" required />
       <input type="password" id="login-password" placeholder="Password" required />
       <button onclick="login()">Log In</button>
