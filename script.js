@@ -2,7 +2,7 @@
 const docPack = [
   {
     file: "01-onboarding-faq.md",
-    keywords: ["onboarding", "faq", "contact", "leader", "shanmukha", "sasi", "phone", "email", "help", "who", "lead"],
+    keywords: ["onboarding", "faq", "contact", "leader", "shanmukha", "sasi", "phone", "email", "help", "who", "lead", "contact"],
     content: "Campus AWS Student Builder Group Leader: Shanmukha Sasi Sadineni (sadinenisasi@gmail.com | 7396025334)."
   },
   {
@@ -44,52 +44,11 @@ const docPack = [
 
 const fallbackContact = "I could not find that in the club documents. Please contact Shanmukha Sasi Sadineni, AWS Student Builder Group Leader, at sadinenisasi@gmail.com or 7396025334.";
 
-// UI Toggle Functions
-function showForgotPassword() {
-  const loginForm = document.getElementById("login-form");
-  const forgotForm = document.getElementById("forgot-form");
-  if (loginForm) loginForm.style.display = "none";
-  if (forgotForm) forgotForm.style.display = "block";
-}
-
-function showLogin() {
-  const loginForm = document.getElementById("login-form");
-  const forgotForm = document.getElementById("forgot-form");
-  if (forgotForm) forgotForm.style.display = "none";
-  if (loginForm) loginForm.style.display = "block";
-}
-
-// Authentication Functions
-function handleLogin(event) {
-  if (event) event.preventDefault();
-  
-  // Login సక్సెస్ అయ్యాక Login Form దాచి Chat Section చూపిస్తుంది
-  const authSection = document.getElementById("auth-section") || document.getElementById("login-form");
-  const chatSection = document.getElementById("chat-section");
-  
-  if (authSection) authSection.style.display = "none";
-  if (chatSection) chatSection.style.display = "block";
-  
-  // ఒకవేళ అలర్ట్ బాక్స్ ఉంటే
-  alert("Successfully Logged In!");
-}
-
-function handleSignup(event) {
-  if (event) event.preventDefault();
-  handleLogin(event);
-}
-
-function handleForgotPassword(event) {
-  if (event) event.preventDefault();
-  alert("Password reset code sent to your email!");
-  showLogin();
-}
-
-// Smart Search Function
+// Flexible Smart Search Function
 function findBestAnswer(userQuery) {
   const query = userQuery.toLowerCase().trim();
-  const stopWords = ["is", "the", "a", "an", "how", "do", "i", "when", "what", "where", "can", "to", "in", "on", "for", "of", "my"];
-  const words = query.split(/\s+/).filter(word => !stopWords.includes(word) && word.length > 1);
+  const stopWords = ["is", "the", "a", "an", "how", "do", "i", "when", "what", "where", "can", "to", "in", "on", "for", "of", "my", "tell", "me", "about"];
+  const words = query.split(/\s+/).filter(word => !stopWords.includes(word) && word.length > 0);
 
   let bestMatch = null;
   let highestScore = 0;
@@ -97,22 +56,20 @@ function findBestAnswer(userQuery) {
   docPack.forEach(doc => {
     let score = 0;
 
-    // 1. Keyword Phrase Match
+    // 1. Keyword Matches
     doc.keywords.forEach(kw => {
       if (query.includes(kw.toLowerCase())) {
         score += 5;
       }
     });
 
-    // 2. Individual Word Match
+    // 2. Individual Word Matching across content & keywords
     words.forEach(word => {
       doc.keywords.forEach(kw => {
-        if (kw.toLowerCase().includes(word)) {
-          score += 2;
-        }
+        if (kw.toLowerCase().includes(word)) score += 2;
       });
       if (doc.content.toLowerCase().includes(word)) {
-        score += 1;
+        score += 2;
       }
     });
 
@@ -122,42 +79,53 @@ function findBestAnswer(userQuery) {
     }
   });
 
-  if (bestMatch && highestScore >= 2) {
+  if (bestMatch && highestScore >= 1) {
     return `${bestMatch.content}<br><br><strong>Source:</strong> ${bestMatch.file}`;
   } else {
     return `${fallbackContact}<br><br><strong>Source:</strong> 01-onboarding-faq.md`;
   }
 }
 
-// Chat Submission Handler
-function handleChatSubmit(event) {
-  if (event) event.preventDefault();
+// Global Event Listener to attach submit handling dynamically
+document.addEventListener("DOMContentLoaded", () => {
+  const chatForm = document.querySelector("form") || document.getElementById("chat-form");
   
-  const inputEl = document.getElementById("chat-input");
-  if (!inputEl) return;
-  
-  const userText = inputEl.value.trim();
-  if (!userText) return;
+  // Attach Submit Handler
+  window.handleChatSubmit = function(event) {
+    if (event) event.preventDefault();
+    
+    const inputEl = document.querySelector('input[type="text"]') || document.getElementById("chat-input");
+    if (!inputEl) return;
+    
+    const userText = inputEl.value.trim();
+    if (!userText) return;
 
-  // Append User Message
-  appendMessage(userText, "user-message");
-  inputEl.value = "";
+    // Show User Message
+    appendMessage(userText, "user-message");
+    inputEl.value = "";
 
-  // Get AI Response
-  const botAnswer = findBestAnswer(userText);
+    // Generate Answer
+    const botAnswer = findBestAnswer(userText);
 
-  setTimeout(() => {
-    appendMessage(botAnswer, "bot-message");
-  }, 300);
-}
+    setTimeout(() => {
+      appendMessage(botAnswer, "bot-message");
+    }, 300);
+  };
+});
 
-// Helper to Append Messages to Chat UI
+// Message Append Utility
 function appendMessage(text, className) {
-  const chatBox = document.getElementById("chat-box");
+  const chatBox = document.getElementById("chat-box") || document.querySelector(".chat-box") || document.querySelector(".messages");
   if (!chatBox) return;
 
   const msgDiv = document.createElement("div");
   msgDiv.className = `message ${className}`;
+  msgDiv.style.margin = "8px 0";
+  msgDiv.style.padding = "10px";
+  msgDiv.style.borderRadius = "6px";
+  msgDiv.style.background = className.includes("user") ? "#2563eb" : "#334155";
+  msgDiv.style.color = "#fff";
+  
   msgDiv.innerHTML = text;
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
