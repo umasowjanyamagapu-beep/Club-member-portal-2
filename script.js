@@ -1,4 +1,4 @@
-// Individual Team Directory
+// Team Directory
 const teamMembers = [
   { name: "shanmukha sasi sadineni", role: "AWS Student Builder Group Leader", phone: "7396025334", email: "sadinenisasi@gmail.com", keywords: ["sasi", "shanmukha", "leader"] },
   { name: "revan kumar goud bommagoni", role: "Technical Lead", phone: "8106105746", email: "brevankumargoud@gmail.com", keywords: ["revan", "technical lead"] },
@@ -85,7 +85,6 @@ function logout() {
   switchTab("login");
 }
 
-// Upload Text File Handler
 function handleFileUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -98,7 +97,6 @@ function handleFileUpload(event) {
   reader.readAsText(file);
 }
 
-// Add Custom Document to Knowledge Base
 function addCustomDocument() {
   const title = document.getElementById("doc-title-input").value.trim();
   const content = document.getElementById("doc-content-input").value.trim();
@@ -119,15 +117,22 @@ function addCustomDocument() {
   document.getElementById("doc-badge").innerText = `Docs Loaded (${docPack.length}/${docPack.length})`;
   document.getElementById("doc-title-input").value = "";
   document.getElementById("doc-content-input").value = "";
-  alert(`Document '${title}' published successfully to Chatbot Knowledge Base!`);
+  alert(`Document '${title}' published successfully to Knowledge Base!`);
 }
 
-// Search Logic
+// Improved Search Algorithm with Friendly Greetings Support
 function findBestAnswer(query) {
   const cleanQuery = query.toLowerCase().trim();
+
+  // 1. Check Common Greetings
+  const greetings = ["hello", "hi", "hey", "greetings", "good morning", "good afternoon"];
+  if (greetings.includes(cleanQuery)) {
+    return "Hello! How can I assist you today with the AWS Student Builder Group documents, team members, or workshops?";
+  }
+
   const words = cleanQuery.replace(/[^\w\s]/gi, '').split(/\s+/).filter(w => w.length > 0);
 
-  // Search Team First
+  // 2. Search Team Members
   for (let person of teamMembers) {
     let matches = person.keywords.some(kw => cleanQuery.includes(kw)) || words.some(w => person.name.includes(w));
     if (matches) {
@@ -136,7 +141,7 @@ function findBestAnswer(query) {
     }
   }
 
-  // Search Documents
+  // 3. Search Documents
   let bestDoc = null;
   let highestScore = 0;
 
