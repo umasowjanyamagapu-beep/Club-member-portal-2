@@ -1,17 +1,50 @@
 // Starter Knowledge Base (8 Mock Documents)
 const docPack = [
-  { file: "01-onboarding-faq.md", keywords: ["workshop", "next", "time", "contact", "leader"], content: "Next workshop details and directory are available on the dashboard." },
-  { file: "02-aws-account-setup.md", keywords: ["account", "billing", "setup", "credits"], content: "AWS account setup requires an active email and valid credit/debit card for billing." },
-  { file: "03-builder-center-publish.md", keywords: ["publish", "builder center", "article"], content: "To publish on Builder Center, submit your article markdown at builder.aws.com with relevant tags." },
-  { file: "04-bedrock-starter.md", keywords: ["bedrock", "ai", "llm", "model"], content: "Amazon Bedrock provides foundation models for generative AI app development." },
-  { file: "05-hackathon-rules.md", keywords: ["hackathon", "rules", "team"], content: "Teams must consist of 2-3 students. 70% baseline is mandatory." },
-  { file: "06-workshop-index.md", keywords: ["past workshops", "history"], content: "Index of all previous club workshops and slides." },
-  { file: "07-lambda-patterns.md", keywords: ["lambda", "serverless", "api"], content: "Serverless API architectures using AWS Lambda and API Gateway." },
-  { file: "08-sbg-community.md", keywords: ["sbg", "community", "chapter"], content: "About Student Builder Groups and chapter leadership details." }
+  {
+    file: "01-onboarding-faq.md",
+    keywords: ["onboarding", "faq", "contact", "leader", "shanmukha", "sasi", "phone", "email", "help", "who", "lead"],
+    content: "Campus AWS Student Builder Group Leader: Shanmukha Sasi Sadineni (sadinenisasi@gmail.com | 7396025334)."
+  },
+  {
+    file: "02-aws-account-setup.md",
+    keywords: ["account", "billing", "setup", "credits", "free tier", "create", "aws account"],
+    content: "Set up your AWS account using your student email to activate AWS Educate or AWS Free Tier options."
+  },
+  {
+    file: "03-builder-center-publish.md",
+    keywords: ["builder center", "publish", "article", "post", "blog", "tags", "how to publish"],
+    content: "To publish on Builder Center: Write your project details, add screenshots, include tags #aws-student-builders-groups #buildonaws, and publish at builder.aws.com."
+  },
+  {
+    file: "04-bedrock-starter.md",
+    keywords: ["bedrock", "ai", "llm", "model", "claude", "genai", "generative ai"],
+    content: "Amazon Bedrock provides API access to generative AI foundation models like Claude for building chatbots and RAG applications."
+  },
+  {
+    file: "05-hackathon-rules.md",
+    keywords: ["rule", "rules", "team", "hackathon", "submission", "members", "size", "pitch"],
+    content: "Hackathon Rules: Teams must consist of 2-3 students. Deliverables include 70% baseline local demo, pitch deck, and Builder Center article."
+  },
+  {
+    file: "06-workshop-index.md",
+    keywords: ["workshop", "workshops", "next workshop", "schedule", "event", "when", "time", "date"],
+    content: "The next workshop on 'AWS Bedrock & RAG Integration' is scheduled for Friday at 4:00 PM in Lab 3."
+  },
+  {
+    file: "07-lambda-patterns.md",
+    keywords: ["lambda", "serverless", "api", "function", "backend", "code"],
+    content: "Use AWS Lambda for serverless backend functionality without managing servers."
+  },
+  {
+    file: "08-sbg-community.md",
+    keywords: ["community", "chapter", "sbg", "club", "student builder group", "about"],
+    content: "AWS Student Builder Groups foster peer learning, open-source building, and cloud innovation across university campuses."
+  }
 ];
 
 const fallbackContact = "I could not find that in the club documents. Please contact Shanmukha Sasi Sadineni, AWS Student Builder Group Leader, at sadinenisasi@gmail.com or 7396025334.";
 
+// UI Toggle Functions
 function showForgotPassword() {
   document.getElementById("login-form").style.display = "none";
   document.getElementById("forgot-form").style.display = "block";
@@ -22,72 +55,80 @@ function showLogin() {
   document.getElementById("login-form").style.display = "block";
 }
 
-function login() {
-  const email = document.getElementById("login-email").value;
-  const pass = document.getElementById("login-password").value;
-  if (email && pass) {
-    document.getElementById("auth-section").style.display = "none";
-    document.getElementById("chat-section").style.display = "block";
-    addBotMessage("Hello! I am your Club Assistant. Ask me anything about our documents.");
+// Smart Search Function
+function findBestAnswer(userQuery) {
+  const query = userQuery.toLowerCase().trim();
+  const stopWords = ["is", "the", "a", "an", "how", "do", "i", "when", "what", "where", "can", "to", "in", "on", "for", "of", "my"];
+  const words = query.split(/\s+/).filter(word => !stopWords.includes(word) && word.length > 1);
+
+  let bestMatch = null;
+  let highestScore = 0;
+
+  docPack.forEach(doc => {
+    let score = 0;
+
+    // 1. Keyword Phrase Match
+    doc.keywords.forEach(kw => {
+      if (query.includes(kw.toLowerCase())) {
+        score += 5;
+      }
+    });
+
+    // 2. Individual Word Match
+    words.forEach(word => {
+      doc.keywords.forEach(kw => {
+        if (kw.toLowerCase().includes(word)) {
+          score += 2;
+        }
+      });
+      if (doc.content.toLowerCase().includes(word)) {
+        score += 1;
+      }
+    });
+
+    if (score > highestScore) {
+      highestScore = score;
+      bestMatch = doc;
+    }
+  });
+
+  if (bestMatch && highestScore >= 2) {
+    return `${bestMatch.content}<br><br><strong>Source:</strong> ${bestMatch.file}`;
   } else {
-    alert("Please enter both email and password.");
+    return `${fallbackContact}<br><br><strong>Source:</strong> 01-onboarding-faq.md`;
   }
 }
 
-function logout() {
-  document.getElementById("chat-section").style.display = "none";
-  document.getElementById("auth-section").style.display = "block";
-}
+// Chat Submission Handler
+function handleChatSubmit(event) {
+  if (event) event.preventDefault();
+  
+  const inputEl = document.getElementById("chat-input");
+  if (!inputEl) return;
+  
+  const userText = inputEl.value.trim();
+  if (!userText) return;
 
-function resetPassword() {
-  const email = document.getElementById("reset-email").value;
-  if (email) {
-    document.getElementById("reset-msg").innerText = "Reset link/code sent to " + email;
-  } else {
-    alert("Please enter your email address.");
-  }
-}
+  // Append User Message
+  appendMessage(userText, "user-message");
+  inputEl.value = "";
 
-function sendMessage() {
-  const input = document.getElementById("user-input");
-  const text = input.value.trim().toLowerCase();
-  if (!text) return;
-
-  addUserMessage(input.value);
-  input.value = "";
-
-  // Search logic
-  let match = docPack.find(doc => doc.keywords.some(kw => text.includes(kw)));
+  // Get AI Response
+  const botAnswer = findBestAnswer(userText);
 
   setTimeout(() => {
-    if (match) {
-      addBotMessage(`${match.content}`, `Source: ${match.file}`);
-    } else {
-      addBotMessage(fallbackContact);
-    }
-  }, 500);
+    appendMessage(botAnswer, "bot-message");
+  }, 300);
 }
 
-function addUserMessage(text) {
-  const box = document.getElementById("chat-box");
-  const div = document.createElement("div");
-  div.className = "msg user-msg";
-  div.innerText = text;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
+// Helper to Append Messages to Chat UI
+function appendMessage(text, className) {
+  const chatBox = document.getElementById("chat-box");
+  if (!chatBox) return;
 
-function addBotMessage(text, source = null) {
-  const box = document.getElementById("chat-box");
-  const div = document.createElement("div");
-  div.className = "msg bot-msg";
-  div.innerText = text;
-  if (source) {
-    const srcSpan = document.createElement("span");
-    srcSpan.className = "source-tag";
-    srcSpan.innerText = source;
-    div.appendChild(srcSpan);
-  }
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
+  const msgDiv = document.createElement("div");
+  msgDiv.className = `message ${className}`;
+  msgDiv.innerHTML = text;
+  chatBox.appendChild(msgDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
