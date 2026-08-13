@@ -1,18 +1,3 @@
-html::before {
-  content: 'CodePen ♥ The Web';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  margin: auto;
-  width: fit-content;
-  height: fit-content;
-  font-family: monospace;
-  opacity: 0.6;
-  background: rebeccapurple;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
 * {
   box-sizing: border-box;
   margin: 0;
@@ -91,11 +76,6 @@ body {
   gap: 16px;
 }
 
-.sub-text {
-  font-size: 0.85rem;
-  color: #94a3b8;
-}
-
 .form-group {
   display: flex;
   flex-direction: column;
@@ -109,16 +89,23 @@ body {
 
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+textarea {
   padding: 10px 14px;
   border-radius: 6px;
   border: 1px solid #475569;
   background: #0f172a;
   color: #fff;
   outline: none;
+  width: 100%;
 }
 
-input:focus {
+textarea {
+  height: 70px;
+  resize: vertical;
+}
+
+input:focus, textarea:focus {
   border-color: #f97316;
 }
 
@@ -159,6 +146,28 @@ input:focus {
   display: none !important;
 }
 
+/* Document Upload Manager Styles */
+.doc-manager {
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px dashed #475569;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-manager h3 {
+  font-size: 0.9rem;
+  color: #f97316;
+}
+
+.upload-box {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
 /* Chat Styles */
 .chat-header {
   display: flex;
@@ -176,7 +185,7 @@ input:focus {
 }
 
 .chat-box {
-  height: 320px;
+  height: 280px;
   overflow-y: auto;
   border: 1px solid #334155;
   background: #0f172a;
@@ -219,4 +228,8 @@ input:focus {
 .chat-input-container {
   display: flex;
   gap: 10px;
+}
+
+.chat-input-container input {
+  flex: 1;
 }
